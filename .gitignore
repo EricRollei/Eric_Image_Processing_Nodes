@@ -1,0 +1,84 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.history/
+.DS_Store
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Model files (large files - users should download separately)
+*.pth
+*.pt
+*.ckpt
+*.safetensors
+!models/dncnn_architecture.py
+!models/fga_nn_architecture.py
+!models/nafnet_architecture.py
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+*.log
+
+# Test outputs
+test_output/
+output/
+
+# PyTorch BM3D build artifacts
+pytorch-bm3d/build/
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.dylib
+
+# ComfyUI specific
+custom_nodes/
+!custom_nodes/.gitkeep
+
+# OS specific
+Thumbs.db
+.DS_Store
+
+# Project specific
+non_contiguous_array_audit.txt
+opencv_cleanup_instructions.py
+OPENCV_FIX_SUMMARY.md
+
+# Workspace files
+*.code-workspace

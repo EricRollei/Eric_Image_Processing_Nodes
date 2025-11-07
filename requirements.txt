@@ -1,0 +1,32 @@
+# Eric's Image Processing Nodes - Requirements
+# Install with: pip install -r requirements.txt
+
+# Core dependencies
+numpy>=1.21.0
+opencv-python>=4.5.0
+scikit-image>=0.19.0
+scipy>=1.7.0
+PyWavelets>=1.3.0
+
+# Optional dependencies for enhanced functionality
+matplotlib>=3.3.0  # For visualization in test scripts
+torch>=1.9.0  # Already available in ComfyUI
+torchvision>=0.10.0  # For additional image processing utilities
+facexlib>=0.3.0  # Required for DiffBIR face restoration helpers
+
+# GPU acceleration (optional but recommended)
+# Install ONE of these based on your CUDA version:
+# cupy-cuda11x  # For CUDA 11.x
+# cupy-cuda12x  # For CUDA 12.x (recommended for latest systems)
+
+# Performance optimization (optional)
+# numba>=0.56.0  # For JIT compilation speedups
+
+# Development dependencies (optional)
+# pytest>=6.0.0  # For running tests
+# black>=21.0.0  # For code formatting
+# flake8>=3.9.0  # For linting
+
+# Note: For GPU acceleration, install CuPy manually:
+# pip install cupy-cuda12x  # or cupy-cuda11x for older CUDA versions
+# GPU acceleration provides 2-5x speedup for wavelet denoising on large images

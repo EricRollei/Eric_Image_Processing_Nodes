@@ -1,0 +1,172 @@
+{
+  "last_node_id": 4,
+  "last_link_id": 3,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "LoadImage",
+      "pos": [60, 180],
+      "size": {
+        "0": 210,
+        "1": 58
+      },
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": {
+        "image": "portrait.jpg"
+      },
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [1],
+          "shape": 3
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [],
+          "shape": 3
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "Load Image"
+      }
+    },
+    {
+      "id": 2,
+      "type": "DiffBIRRestorationNode",
+      "pos": [360, 160],
+      "size": {
+        "0": 380,
+        "1": 570
+      },
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": {
+        "image": [
+          1,
+          0
+        ],
+        "task": "sr",
+        "version": "v2.1",
+        "sampler": "edm_dpm++_3m_sde",
+        "steps": 12,
+        "upscale": 4.0,
+        "cfg_scale": 6.0,
+        "captioner": "none",
+        "noise_aug": 0,
+        "start_point_type": "noise",
+        "rescale_cfg": false,
+        "strength": 1.0,
+        "cleaner_tiled": false,
+        "cleaner_tile_size": 512,
+        "cleaner_tile_stride": 256,
+        "cldm_tiled": false,
+        "cldm_tile_size": 512,
+        "cldm_tile_stride": 256,
+        "guidance": false,
+        "guidance_scale": 0.0,
+        "guidance_loss": "w_mse",
+        "guidance_space": "rgb",
+        "guidance_start": 0.0,
+        "guidance_stop": 1.0,
+        "seed": 231,
+        "device_preference": "auto",
+        "precision": "fp16",
+        "positive_prompt_override": "",
+        "negative_prompt_override": ""
+      },
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [2, 3],
+          "shape": 3
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "DiffBIR Restoration (Eric)"
+      }
+    },
+    {
+      "id": 3,
+      "type": "PreviewImage",
+      "pos": [780, 60],
+      "size": {
+        "0": 315,
+        "1": 58
+      },
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": {
+        "images": [
+          2,
+          0
+        ]
+      },
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "Preview Image"
+      }
+    },
+    {
+      "id": 4,
+      "type": "SaveImage",
+      "pos": [780, 260],
+      "size": {
+        "0": 315,
+        "1": 146
+      },
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": {
+        "images": [
+          2,
+          0
+        ],
+        "filename_prefix": "diffbir_test"
+      },
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "Save Image"
+      }
+    }
+  ],
+  "links": [
+    [
+      1,
+      1,
+      0,
+      2,
+      0
+    ],
+    [
+      2,
+      2,
+      0,
+      3,
+      0
+    ],
+    [
+      3,
+      2,
+      0,
+      4,
+      0
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "notes": {
+      "text": "Load a JPEG/PNG from ComfyUI's input directory, run DiffBIR with v2.1 SR defaults, preview the result, then save it with a diffbir_test prefix.",
+      "pos": [360, 760]
+    }
+  },
+  "version": 0.5
+}

@@ -1,0 +1,412 @@
+"""
+Perceptual Color Space Processing Implementation
+Based on 2024-2025 research findings for advanced color-aware enhancement
+
+Implements:
+- Oklab color space for improved perceptual uniformity
+- Jzazbz color space for better hue prediction
+- LAB processing for luminance-only enhancement
+- Advanced color-aware contrast enhancement
+"""
+
+import numpy as np
+import cv2
+from typing import Dict, Any, Optional, Tuple
+import warnings
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+class PerceptualColorProcessor:
+    """Advanced perceptual color space processing for enhanced image enhancement"""
+    
+    def __init__(self):
+        """Initialize perceptual color processor"""
+        self.supported_spaces = [
+            'oklab', 'jzazbz', 'lab', 'luv', 'xyz', 'rgb'
+        ]
+        
+    def rgb_to_oklab(self, rgb: np.ndarray) -> np.ndarray:
+        """
+        Convert RGB to Oklab color space
+        
+        Oklab provides better perceptual uniformity than CIELAB
+        Reference: https://bottosson.github.io/posts/oklab/
+        
+        Args:
+            rgb: RGB image array (H, W, 3) in [0, 1] range
+            
+        Returns:
+            Oklab image array
+        """
+        # Ensure input is in [0, 1] range
+        rgb = np.clip(rgb, 0, 1)
+        
+        # Linear RGB conversion
+        rgb_linear = np.where(rgb <= 0.04045, 
+                            rgb / 12.92, 
+                            np.power((rgb + 0.055) / 1.055, 2.4))
+        
+        # RGB to LMS
+        lms = np.dot(rgb_linear, np.array([
+            [0.4122214708, 0.5363325363, 0.0514459929],
+            [0.2119034982, 0.6806995451, 0.1073969566],
+            [0.0883024619, 0.2817188376, 0.6299787005]
+        ]).T)
+        
+        # Ensure non-negative values for cube root
+        lms = np.maximum(lms, 0)
+        
+        # LMS to Lab
+        lms_prime = np.cbrt(lms)
+        
+        lab = np.dot(lms_prime, np.array([
+            [0.2104542553, 0.7936177850, -0.0040720468],
+            [1.9779984951, -2.4285922050, 0.4505937099],
+            [0.0259040371, 0.7827717662, -0.8086757660]
+        ]).T)
+        
+        return lab
+    
+    def oklab_to_rgb(self, lab: np.ndarray) -> np.ndarray:
+        """
+        Convert Oklab to RGB color space
+        
+        Args:
+            lab: Oklab image array (H, W, 3)
+            
+        Returns:
+            RGB image array in [0, 1] range
+        """
+        # Lab to LMS
+        lms_prime = np.dot(lab, np.array([
+            [0.99999999845051981432, 0.39633779217376785678, 0.21580375806075880339],
+            [1.0000000088817607767, -0.10556134232365635199, -0.063854174771705903402],
+            [1.0000000546724109177, -0.089484182094965759684, -1.2914855378640917399]
+        ]).T)
+        
+        # Cube LMS prime to get LMS
+        lms = np.power(lms_prime, 3)
+        
+        # LMS to linear RGB
+        rgb_linear = np.dot(lms, np.array([
+            [4.0767416621, -3.3077115913, 0.2309699292],
+            [-1.2684380046, 2.6097574011, -0.3413193965],
+            [-0.0041960863, -0.7034186147, 1.7076147010]
+        ]).T)
+        
+        # Linear RGB to sRGB
+        rgb = np.where(rgb_linear <= 0.0031308,
+                      12.92 * rgb_linear,
+                      1.055 * np.power(rgb_linear, 1/2.4) - 0.055)
+        
+        return np.clip(rgb, 0, 1)
+    
+    def rgb_to_jzazbz(self, rgb: np.ndarray) -> np.ndarray:
+        """
+        Convert RGB to Jzazbz color space
+        
+        Jzazbz provides better hue prediction and uniform color transitions
+        Reference: https://www.osapublishing.org/oe/fulltext.cfm?uri=oe-25-13-15131
+        
+        Args:
+            rgb: RGB image array (H, W, 3) in [0, 1] range
+            
+        Returns:
+            Jzazbz image array
+        """
+        # Ensure input is in [0, 1] range
+        rgb = np.clip(rgb, 0, 1)
+        
+        # Linear RGB conversion
+        rgb_linear = np.where(rgb <= 0.04045, 
+                            rgb / 12.92, 
+                            np.power((rgb + 0.055) / 1.055, 2.4))
+        
+        # RGB to XYZ (D65 illuminant)
+        xyz = np.dot(rgb_linear, np.array([
+            [0.41239080, 0.35758434, 0.18048079],
+            [0.21263901, 0.71516868, 0.07219232],
+            [0.01933082, 0.11919478, 0.95053215]
+        ]).T)
+        
+        # XYZ to LMS
+        lms = np.dot(xyz, np.array([
+            [0.674207838, 0.382799340, -0.047570458],
+            [-0.090230784, 1.616034269, 0.036978723],
+            [-0.017061047, 0.089415456, 0.896995761]
+        ]).T)
+        
+        # Perceptual quantizer
+        m1 = 2610.0 / 4096.0 * (1.0 / 4.0)
+        m2 = 2523.0 / 4096.0 * 128.0
+        c1 = 3424.0 / 4096.0
+        c2 = 2413.0 / 4096.0 * 32.0
+        c3 = 2392.0 / 4096.0 * 32.0
+        
+        lms = np.maximum(lms, 0)
+        lms_prime = np.power(lms / 10000.0, m1)
+        lms_prime = np.power((c1 + c2 * lms_prime) / (1 + c3 * lms_prime), m2)
+        
+        # LMS to Jzazbz
+        jzazbz = np.dot(lms_prime, np.array([
+            [0.5, 0.5, 0.0],
+            [3.524000, -4.066708, 0.542708],
+            [0.199076, 1.096799, -1.295875]
+        ]).T)
+        
+        # Apply nonlinearity to J
+        jzazbz[:, :, 0] = ((1 + 0.007) * jzazbz[:, :, 0]) / (1 + 0.007 * jzazbz[:, :, 0]) - 0.007
+        
+        return jzazbz
+    
+    def jzazbz_to_rgb(self, jzazbz: np.ndarray) -> np.ndarray:
+        """
+        Convert Jzazbz to RGB color space
+        
+        Args:
+            jzazbz: Jzazbz image array (H, W, 3)
+            
+        Returns:
+            RGB image array in [0, 1] range
+        """
+        jzazbz = jzazbz.copy()
+        
+        # Remove J nonlinearity
+        jzazbz[:, :, 0] = (jzazbz[:, :, 0] + 0.007) / (1 + 0.007 - 0.007 * jzazbz[:, :, 0])
+        
+        # Jzazbz to LMS
+        lms_prime = np.dot(jzazbz, np.array([
+            [1.0, 0.138605043271539, 0.0580473161561189],
+            [1.0, -0.138605043271539, -0.0580473161561189],
+            [1.0, -0.096019242026319, -0.811891896056039]
+        ]).T)
+        
+        # Inverse perceptual quantizer
+        m1 = 2610.0 / 4096.0 * (1.0 / 4.0)
+        m2 = 2523.0 / 4096.0 * 128.0
+        c1 = 3424.0 / 4096.0
+        c2 = 2413.0 / 4096.0 * 32.0
+        c3 = 2392.0 / 4096.0 * 32.0
+        
+        lms = np.power(np.maximum(lms_prime, 0), 1/m2)
+        lms = np.power(np.maximum(lms - c1, 0) / (c2 - c3 * lms), 1/m1) * 10000.0
+        
+        # LMS to XYZ
+        xyz = np.dot(lms, np.array([
+            [1.661373055774069, -0.587574479480407, -0.082810631825662],
+            [-0.040570776157406, 0.929148086289805, 0.036837391851655],
+            [0.025006048068862, -0.019839799178987, 1.089063355086754]
+        ]).T)
+        
+        # XYZ to RGB
+        rgb_linear = np.dot(xyz, np.array([
+            [3.2406, -1.5372, -0.4986],
+            [-0.9689, 1.8758, 0.0415],
+            [0.0557, -0.2040, 1.0570]
+        ]).T)
+        
+        # Linear RGB to sRGB
+        rgb = np.where(rgb_linear <= 0.0031308,
+                      12.92 * rgb_linear,
+                      1.055 * np.power(np.maximum(rgb_linear, 0), 1/2.4) - 0.055)
+        
+        return np.clip(rgb, 0, 1)
+    
+    def lab_luminance_enhancement(self, image: np.ndarray, 
+                                 enhancement_strength: float = 1.0) -> np.ndarray:
+        """
+        Enhance luminance in LAB color space while preserving chrominance
+        
+        Args:
+            image: RGB image array (H, W, 3) in [0, 1] range
+            enhancement_strength: Enhancement strength (0.0 to 2.0)
+            
+        Returns:
+            Enhanced RGB image
+        """
+        # Convert to LAB
+        lab = cv2.cvtColor((image * 255).astype(np.uint8), cv2.COLOR_RGB2LAB)
+        lab = lab.astype(np.float32)
+        
+        # Extract L channel
+        l_channel = np.ascontiguousarray(lab[:, :, 0])
+        # FIXED: Ensure contiguous array before CLAHE operation
+        l_channel = np.ascontiguousarray(l_channel)
+        
+        # Apply CLAHE to L channel
+        clahe = cv2.createCLAHE(clipLimit=2.0 * enhancement_strength, tileGridSize=(8, 8))
+        l_enhanced = clahe.apply(l_channel.astype(np.uint8))
+        
+        # Blend original and enhanced L channel
+        l_final = cv2.addWeighted(l_channel, 1 - enhancement_strength, 
+                                 l_enhanced.astype(np.float32), enhancement_strength, 0)
+        
+        # Replace L channel
+        lab[:, :, 0] = l_final
+        # FIXED: Ensure contiguous array after slice assignment before color conversion
+        lab = np.ascontiguousarray(lab)
+        
+        # Convert back to RGB
+        rgb_enhanced = cv2.cvtColor(lab.astype(np.uint8), cv2.COLOR_LAB2RGB)
+        
+        return rgb_enhanced.astype(np.float32) / 255.0
+    
+    def perceptual_contrast_enhancement(self, image: np.ndarray,
+                                      color_space: str = 'oklab',
+                                      enhancement_strength: float = 1.0) -> np.ndarray:
+        """
+        Enhance contrast in perceptual color space
+        
+        Args:
+            image: RGB image array (H, W, 3) in [0, 1] range
+            color_space: Color space to use ('oklab', 'jzazbz', 'lab')
+            enhancement_strength: Enhancement strength (0.0 to 2.0)
+            
+        Returns:
+            Enhanced RGB image
+        """
+        if color_space == 'oklab':
+            # Convert to Oklab
+            perceptual = self.rgb_to_oklab(image)
+            
+            # Enhance L channel
+            l_channel = np.ascontiguousarray(perceptual[:, :, 0])
+            l_mean = np.mean(l_channel)
+            l_enhanced = l_mean + (l_channel - l_mean) * (1 + enhancement_strength)
+            l_enhanced = np.clip(l_enhanced, 0, 1)
+            
+            perceptual[:, :, 0] = l_enhanced
+            
+            # Convert back to RGB
+            return self.oklab_to_rgb(perceptual)
+            
+        elif color_space == 'jzazbz':
+            # Convert to Jzazbz
+            perceptual = self.rgb_to_jzazbz(image)
+            
+            # Enhance J channel
+            j_channel = np.ascontiguousarray(perceptual[:, :, 0])
+            j_mean = np.mean(j_channel)
+            j_enhanced = j_mean + (j_channel - j_mean) * (1 + enhancement_strength)
+            j_enhanced = np.clip(j_enhanced, 0, 1)
+            
+            perceptual[:, :, 0] = j_enhanced
+            
+            # Convert back to RGB
+            return self.jzazbz_to_rgb(perceptual)
+            
+        elif color_space == 'lab':
+            return self.lab_luminance_enhancement(image, enhancement_strength)
+        
+        else:
+            raise ValueError(f"Unsupported color space: {color_space}")
+    
+    def get_processing_info(self, color_space: str) -> Dict[str, Any]:
+        """Get processing information for color space"""
+        info = {
+            'oklab': {
+                'name': 'Oklab',
+                'description': 'Better perceptual uniformity than CIELAB',
+                'advantages': ['Improved perceptual uniformity', 'Better hue prediction', 'Uniform color transitions'],
+                'use_cases': ['General enhancement', 'Color grading', 'Artistic applications']
+            },
+            'jzazbz': {
+                'name': 'Jzazbz',
+                'description': 'Advanced perceptual color space with excellent hue prediction',
+                'advantages': ['Superior hue prediction', 'Uniform color transitions', 'HDR compatibility'],
+                'use_cases': ['Professional color grading', 'HDR processing', 'Accurate color reproduction']
+            },
+            'lab': {
+                'name': 'CIELAB',
+                'description': 'Standard perceptual color space',
+                'advantages': ['Luminance-chrominance separation', 'Wide support', 'Predictable results'],
+                'use_cases': ['Luminance enhancement', 'Traditional color processing', 'Scientific applications']
+            }
+        }
+        
+        return info.get(color_space, {})
+
+
+def get_perceptual_color_presets() -> Dict[str, Dict[str, Any]]:
+    """Get available perceptual color processing presets"""
+    return {
+        "oklab_subtle": {
+            "color_space": "oklab",
+            "enhancement_strength": 0.3,
+            "description": "Subtle enhancement in Oklab space"
+        },
+        "oklab_moderate": {
+            "color_space": "oklab",
+            "enhancement_strength": 0.7,
+            "description": "Moderate enhancement in Oklab space"
+        },
+        "oklab_strong": {
+            "color_space": "oklab",
+            "enhancement_strength": 1.2,
+            "description": "Strong enhancement in Oklab space"
+        },
+        "jzazbz_professional": {
+            "color_space": "jzazbz",
+            "enhancement_strength": 0.5,
+            "description": "Professional color grading in Jzazbz space"
+        },
+        "lab_luminance": {
+            "color_space": "lab",
+            "enhancement_strength": 0.8,
+            "description": "Luminance-only enhancement in LAB space"
+        }
+    }
+
+
+def process_with_perceptual_color(image: np.ndarray,
+                                color_space: str = 'oklab',
+                                enhancement_strength: float = 1.0,
+                                **kwargs) -> Tuple[np.ndarray, Dict[str, Any]]:
+    """
+    Process image with perceptual color enhancement
+    
+    Args:
+        image: Input image (H, W, C) in RGB format
+        color_space: Color space to use
+        enhancement_strength: Enhancement strength
+        **kwargs: Additional parameters
+    
+    Returns:
+        (enhanced_image, processing_info)
+    """
+    processor = PerceptualColorProcessor()
+    
+    # Ensure image is in [0, 1] range
+    if image.dtype == np.uint8:
+        image = image.astype(np.float32) / 255.0
+    
+    enhanced = processor.perceptual_contrast_enhancement(
+        image, color_space, enhancement_strength
+    )
+    
+    info = processor.get_processing_info(color_space)
+    info.update({
+        'enhancement_strength': enhancement_strength,
+        'input_shape': image.shape,
+        'output_shape': enhanced.shape
+    })
+    
+    return enhanced, info
+
+
+# Example usage and testing
+if __name__ == "__main__":
+    # Test with synthetic image
+    test_image = np.random.rand(256, 256, 3).astype(np.float32)
+    
+    print("Testing perceptual color processing...")
+    
+    for color_space in ['oklab', 'jzazbz', 'lab']:
+        try:
+            enhanced, info = process_with_perceptual_color(test_image, color_space)
+            print(f"{color_space.upper()}: {enhanced.shape}, {info['name']}")
+        except Exception as e:
+            print(f"Error with {color_space}: {e}")

@@ -1,0 +1,305 @@
+"""
+Non-Local Means denoising implementation
+Excellent for preserving textures and repetitive patterns in photographs
+"""
+
+import numpy as np
+import cv2
+from typing import Optional, Tuple
+from skimage.restoration import denoise_nl_means, estimate_sigma
+from skimage import img_as_float, img_as_ubyte
+
+
+def nonlocal_means_denoise(
+    image: np.ndarray,
+    h: Optional[float] = None,
+    patch_size: int = 7,
+    patch_distance: int = 11,
+    multichannel: bool = True,
+    method: str = 'opencv',
+    fast_mode: bool = True,
+    sigma: Optional[float] = None
+) -> np.ndarray:
+    """
+    Non-Local Means denoising with automatic parameter estimation
+    
+    This algorithm excels at:
+    - Preserving textures and repetitive patterns
+    - Natural photographs with organic noise
+    - Images where traditional filters blur important details
+    
+    Args:
+        image: Input image as numpy array [H, W, C] with values 0-255
+        h: Filtering strength (auto-estimated if None)
+           - Low values (3-10): Preserve more detail, less denoising
+           - Medium values (10-15): Balanced denoising (recommended)
+           - High values (15-25): Strong denoising, may blur details
+        patch_size: Size of patches for comparison (odd numbers)
+                   - 5: Fast, good for small textures
+                   - 7: Standard choice, good balance (recommended)
+                   - 9-11: Better for large textures, slower
+        patch_distance: Search window size
+                       - 11: Fast, sufficient for most cases (recommended)
+                       - 15-21: Better quality, much slower
+                       - Must be larger than patch_size
+        multichannel: Process color images as multichannel
+        method: Implementation to use ('opencv', 'skimage')
+               - 'opencv': Faster, good quality
+               - 'skimage': Slower, potentially better quality
+        fast_mode: Use fast mode (opencv only)
+                  - True: ~3x faster with slight quality loss
+                  - False: Higher quality, slower
+        sigma: Noise level estimate (auto-estimated if None)
+    
+    Returns:
+        Denoised image as numpy array [H, W, C] with values 0-255
+    """
+    
+    # Validate inputs
+    if image.ndim not in [2, 3]:
+        raise ValueError("Image must be 2D (grayscale) or 3D (color)")
+    
+    if patch_distance <= patch_size:
+        raise ValueError("patch_distance must be larger than patch_size")
+    
+    # Estimate noise level if not provided
+    if sigma is None:
+        if image.ndim == 3:
+            # Estimate on luminance channel
+            image = np.ascontiguousarray(image)
+
+            gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+            # FIXED: Ensure contiguous array after cv2.cvtColor
+            gray = np.ascontiguousarray(gray)
+        else:
+            gray = image
+        
+        sigma = estimate_sigma(gray.astype(np.float32) / 255.0, channel_axis=None) * 255
+    
+    # Auto-estimate h parameter if not provided
+    if h is None:
+        # Empirical relationship between sigma and h
+        h = max(5.0, min(25.0, sigma * 0.6))
+    
+    print(f"Using h={h:.1f}, estimated sigma={sigma:.1f}")
+    
+    # Choose implementation
+    if method == 'opencv':
+        return _opencv_nlm_denoise(image, h, patch_size, patch_distance, multichannel, fast_mode)
+    elif method == 'skimage':
+        return _skimage_nlm_denoise(image, h, patch_size, patch_distance, multichannel, sigma)
+    else:
+        raise ValueError(f"Unknown method: {method}")
+
+
+def _opencv_nlm_denoise(
+    image: np.ndarray,
+    h: float,
+    patch_size: int,
+    patch_distance: int,
+    multichannel: bool,
+    fast_mode: bool
+) -> np.ndarray:
+    """OpenCV implementation of Non-Local Means"""
+    
+    if image.ndim == 2:
+        # Grayscale image
+        if fast_mode:
+            denoised = cv2.fastNlMeansDenoising(
+                image, None, h, patch_size, patch_distance
+            )
+        else:
+            denoised = cv2.fastNlMeansDenoising(
+                image, None, h, patch_size, patch_distance
+            )
+    else:
+        # Color image
+        if multichannel:
+            if fast_mode:
+                denoised = cv2.fastNlMeansDenoisingColored(
+                    image, None, h, h, patch_size, patch_distance
+                )
+            else:
+                denoised = cv2.fastNlMeansDenoisingColored(
+                    image, None, h, h, patch_size, patch_distance
+                )
+        else:
+            # Process as grayscale
+            image = np.ascontiguousarray(image)
+
+            gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+            # FIXED: Ensure contiguous array after cv2.cvtColor
+            gray = np.ascontiguousarray(gray)
+            if fast_mode:
+                denoised_gray = cv2.fastNlMeansDenoising(
+                    gray, None, h, patch_size, patch_distance
+                )
+            else:
+                denoised_gray = cv2.fastNlMeansDenoising(
+                    gray, None, h, patch_size, patch_distance
+                )
+            # Convert back to color
+            denoised_gray = np.ascontiguousarray(denoised_gray)
+
+            denoised = cv2.cvtColor(denoised_gray, cv2.COLOR_GRAY2RGB)
+    
+    return denoised
+
+
+def _skimage_nlm_denoise(
+    image: np.ndarray,
+    h: float,
+    patch_size: int,
+    patch_distance: int,
+    multichannel: bool,
+    sigma: float
+) -> np.ndarray:
+    """Scikit-image implementation of Non-Local Means"""
+    
+    # Convert to float for processing
+    img_float = img_as_float(image)
+    
+    # Adjust h for skimage (uses different scaling)
+    h_adjusted = h / 255.0
+    sigma_adjusted = sigma / 255.0
+    
+    # Process image
+    if img_float.ndim == 2:
+        channel_axis = None
+    else:
+        channel_axis = -1 if multichannel else None
+    
+    try:
+        # Try new scikit-image API (channel_axis parameter)
+        denoised_float = denoise_nl_means(
+            img_float,
+            h=h_adjusted,
+            patch_size=patch_size,
+            patch_distance=patch_distance,
+            channel_axis=channel_axis,
+            preserve_range=False,
+            sigma=sigma_adjusted
+        )
+    except TypeError:
+        # Fallback to old API (multichannel parameter)
+        denoised_float = denoise_nl_means(
+            img_float,
+            h=h_adjusted,
+            patch_size=patch_size,
+            patch_distance=patch_distance,
+            multichannel=multichannel,
+            preserve_range=False,
+            sigma=sigma_adjusted
+        )
+    
+    # Convert back to uint8
+    denoised = img_as_ubyte(denoised_float)
+    
+    return denoised
+
+
+def adaptive_nonlocal_means(
+    image: np.ndarray,
+    noise_level: str = 'auto',
+    quality: str = 'balanced',
+    preserve_textures: bool = True
+) -> np.ndarray:
+    """
+    Simplified interface with automatic parameter selection
+    
+    Args:
+        image: Input image [H, W, C] with values 0-255
+        noise_level: 'low', 'medium', 'high', or 'auto'
+        quality: 'fast', 'balanced', or 'high'
+        preserve_textures: Adjust parameters to better preserve textures
+    
+    Returns:
+        Denoised image
+    """
+    
+    # Auto-detect noise level
+    if noise_level == 'auto':
+        if image.ndim == 3:
+            image = np.ascontiguousarray(image)
+
+            gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+            # FIXED: Ensure contiguous array after cv2.cvtColor
+            gray = np.ascontiguousarray(gray)
+        else:
+            gray = image
+        
+        sigma = estimate_sigma(gray.astype(np.float32) / 255.0, channel_axis=None) * 255
+        
+        if sigma < 10:
+            noise_level = 'low'
+        elif sigma < 20:
+            noise_level = 'medium'
+        else:
+            noise_level = 'high'
+        
+        print(f"Auto-detected noise level: {noise_level} (sigma={sigma:.1f})")
+    
+    # Parameter sets based on quality and noise level
+    params = {
+        'fast': {
+            'low': {'h': 8, 'patch_size': 5, 'patch_distance': 11},
+            'medium': {'h': 12, 'patch_size': 5, 'patch_distance': 11},
+            'high': {'h': 18, 'patch_size': 7, 'patch_distance': 11}
+        },
+        'balanced': {
+            'low': {'h': 10, 'patch_size': 7, 'patch_distance': 11},
+            'medium': {'h': 15, 'patch_size': 7, 'patch_distance': 15},
+            'high': {'h': 22, 'patch_size': 7, 'patch_distance': 15}
+        },
+        'high': {
+            'low': {'h': 12, 'patch_size': 9, 'patch_distance': 21},
+            'medium': {'h': 18, 'patch_size': 9, 'patch_distance': 21},
+            'high': {'h': 25, 'patch_size': 9, 'patch_distance': 21}
+        }
+    }
+    
+    # Adjust for texture preservation
+    if preserve_textures:
+        params[quality][noise_level]['h'] *= 0.8
+        if quality != 'fast':
+            params[quality][noise_level]['patch_size'] = max(7, params[quality][noise_level]['patch_size'])
+    
+    # Get parameters
+    p = params[quality][noise_level]
+    
+    # Use fast mode for 'fast' quality
+    fast_mode = (quality == 'fast')
+    
+    return nonlocal_means_denoise(
+        image,
+        h=p['h'],
+        patch_size=p['patch_size'],
+        patch_distance=p['patch_distance'],
+        multichannel=True,
+        method='opencv',
+        fast_mode=fast_mode
+    )
+
+
+def get_recommended_parameters(image_type: str, noise_level: str) -> dict:
+    """Get recommended parameters for different image types and noise levels"""
+    
+    recommendations = {
+        'photograph': {
+            'low': {'h': 10, 'patch_size': 7, 'patch_distance': 11, 'fast_mode': True},
+            'medium': {'h': 15, 'patch_size': 7, 'patch_distance': 15, 'fast_mode': False},
+            'high': {'h': 22, 'patch_size': 9, 'patch_distance': 21, 'fast_mode': False}
+        },
+        'scanned_photo': {
+            'low': {'h': 12, 'patch_size': 7, 'patch_distance': 15, 'fast_mode': False},
+            'medium': {'h': 18, 'patch_size': 9, 'patch_distance': 21, 'fast_mode': False},
+            'high': {'h': 25, 'patch_size': 9, 'patch_distance': 21, 'fast_mode': False}
+        },
+        'digital_art': {
+            'low': {'h': 8, 'patch_size': 5, 'patch_distance': 11, 'fast_mode': True},
+            'medium': {'h': 12, 'patch_size': 7, 'patch_distance': 11, 'fast_mode': True},
+            'high': {'h': 18, 'patch_size': 7, 'patch_distance': 15, 'fast_mode': False}
+        }
+    }
+    
+    return recommendations.get(image_type, recommendations['photograph']).get(noise_level, recommendations['photograph']['medium'])
