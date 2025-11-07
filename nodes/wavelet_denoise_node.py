@@ -1,6 +1,27 @@
 """
-ComfyUI node for advanced wavelet denoising
-Provides user-friendly interface with parameter hints and validation
+Wavelet Denoising Node for ComfyUI
+Advanced wavelet-based denoising with multiple thresholding methods
+
+Author: Eric Hiss (GitHub: EricRollei)
+License: See LICENSE file in repository root
+
+Wavelet Denoising Algorithms:
+    VisuShrink: Donoho & Johnstone (1994) - Universal threshold
+    BayesShrink: Chang et al. (2000) - Adaptive Bayesian threshold
+    SUREShrink: Donoho & Johnstone (1995) - Stein's Unbiased Risk Estimate
+    
+    Base Reference:
+    @article{donoho1995adapting,
+      title={Adapting to Unknown Smoothness via Wavelet Shrinkage},
+      author={Donoho, David L and Johnstone, Iain M},
+      journal={Journal of the American Statistical Association},
+      year={1995}
+    }
+
+Dependencies:
+    - PyTorch (BSD 3-Clause License)
+    - PyWavelets (MIT License)
+    - NumPy (BSD 3-Clause License)
 """
 
 import torch

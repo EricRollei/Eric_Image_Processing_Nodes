@@ -1,6 +1,27 @@
 """
-ComfyUI node for Non-Local Means denoising
+Non-Local Means Denoising Node for ComfyUI
 Excellent for photographs and natural images with organic textures
+
+Author: Eric Hiss (GitHub: EricRollei)
+License: See LICENSE file in repository root
+
+Non-Local Means Algorithm:
+    Paper: "A Non-Local Algorithm for Image Denoising"
+    Authors: Buades et al., CVPR 2005
+    
+    Citation:
+    @inproceedings{buades2005non,
+      title={A Non-Local Algorithm for Image Denoising},
+      author={Buades, Antoni and Coll, Bartomeu and Morel, Jean-Michel},
+      booktitle={IEEE Computer Society Conference on Computer Vision and Pattern Recognition},
+      year={2005}
+    }
+
+Dependencies:
+    - PyTorch (BSD 3-Clause License)
+    - OpenCV (Apache 2.0 License)
+    - NumPy (BSD 3-Clause License)
+    - scikit-image (BSD 3-Clause License)
 """
 
 import torch

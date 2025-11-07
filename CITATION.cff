@@ -1,0 +1,104 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "Eric's Image Processing Nodes for ComfyUI"
+abstract: "Advanced image processing nodes for ComfyUI providing 40+ algorithms including traditional denoising (wavelet, NLM, BM3D), AI models (DnCNN, SwinIR, SCUNet, NAFNet), frequency domain processing, and specialized film grain handling with GPU acceleration."
+authors:
+  - family-names: "Hiss"
+    given-names: "Eric"
+    email: "eric@historic.camera"
+    alias: "EricRollei"
+repository-code: "https://github.com/EricRollei/Eric_Image_Processing_Nodes"
+url: "https://github.com/EricRollei/Eric_Image_Processing_Nodes"
+license: "CC-BY-NC-4.0"
+version: "1.0.0"
+date-released: "2025-11-06"
+keywords:
+  - "image processing"
+  - "denoising"
+  - "ComfyUI"
+  - "computer vision"
+  - "deep learning"
+  - "wavelet"
+  - "BM3D"
+  - "film grain"
+  - "GPU acceleration"
+  - "image restoration"
+references:
+  - type: article
+    title: "Beyond a Gaussian Denoiser: Residual Learning of Deep CNN for Image Denoising"
+    authors:
+      - family-names: "Zhang"
+        given-names: "Kai"
+      - family-names: "Zuo"
+        given-names: "Wangmeng"
+      - family-names: "Chen"
+        given-names: "Yunjin"
+      - family-names: "Meng"
+        given-names: "Deyu"
+      - family-names: "Zhang"
+        given-names: "Lei"
+    journal: "IEEE Transactions on Image Processing"
+    volume: 26
+    issue: 7
+    year: 2017
+    doi: "10.1109/TIP.2017.2662206"
+    notes: "DnCNN algorithm implementation"
+  
+  - type: conference-paper
+    title: "Practical Blind Denoising via Swin-Conv-UNet and Data Synthesis"
+    authors:
+      - family-names: "Zhang"
+        given-names: "Kai"
+      - family-names: "Li"
+        given-names: "Yawei"
+      - family-names: "Liang"
+        given-names: "Jingyun"
+    conference: "European Conference on Computer Vision (ECCV)"
+    year: 2022
+    notes: "SCUNet algorithm implementation"
+  
+  - type: conference-paper
+    title: "SwinIR: Image Restoration Using Swin Transformer"
+    authors:
+      - family-names: "Liang"
+        given-names: "Jingyun"
+      - family-names: "Cao"
+        given-names: "Jiezhang"
+      - family-names: "Sun"
+        given-names: "Guolei"
+    conference: "IEEE/CVF International Conference on Computer Vision (ICCV)"
+    year: 2021
+    doi: "10.1109/ICCVW54120.2021.00210"
+    notes: "SwinIR algorithm implementation"
+  
+  - type: conference-paper
+    title: "Simple Baselines for Image Restoration"
+    authors:
+      - family-names: "Chen"
+        given-names: "Liangyu"
+      - family-names: "Chu"
+        given-names: "Xiaojie"
+      - family-names: "Zhang"
+        given-names: "Xiangyu"
+    conference: "European Conference on Computer Vision (ECCV)"
+    year: 2022
+    notes: "NAFNet algorithm implementation"
+  
+  - type: article
+    title: "Image Denoising by Sparse 3-D Transform-Domain Collaborative Filtering"
+    authors:
+      - family-names: "Dabov"
+        given-names: "Kostadin"
+      - family-names: "Foi"
+        given-names: "Alessandro"
+      - family-names: "Katkovnik"
+        given-names: "Vladimir"
+      - family-names: "Egiazarian"
+        given-names: "Karen"
+    journal: "IEEE Transactions on Image Processing"
+    volume: 16
+    issue: 8
+    year: 2007
+    doi: "10.1109/TIP.2007.901238"
+    notes: "BM3D algorithm (GPU-accelerated implementation via pytorch-bm3d)"

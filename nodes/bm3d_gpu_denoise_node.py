@@ -1,8 +1,34 @@
 """
 GPU-Accelerated BM3D Denoise Node for ComfyUI
+15-30x faster than CPU BM3D implementation
 
-Provides GPU-accelerated BM3D denoising using pytorch-bm3d library.
-15-30x faster than CPU BM3D implementation.
+Author: Eric Hiss (GitHub: EricRollei)
+License: See LICENSE file in repository root
+
+Original BM3D Algorithm:
+    Paper: "Image Denoising by Sparse 3-D Transform-Domain Collaborative Filtering"
+    Authors: Dabov et al., IEEE TIP 2007
+    
+    Citation:
+    @article{dabov2007bm3d,
+      title={Image Denoising by Sparse 3-D Transform-Domain Collaborative Filtering},
+      author={Dabov, Kostadin and Foi, Alessandro and Katkovnik, Vladimir and Egiazarian, Karen},
+      journal={IEEE Transactions on Image Processing},
+      volume={16},
+      number={8},
+      pages={2080--2095},
+      year={2007}
+    }
+
+GPU Implementation:
+    Library: pytorch-bm3d (https://github.com/lizhihao6/pytorch-bm3d)
+    Author: lizhihao6
+    License: MIT License
+
+Dependencies:
+    - PyTorch (BSD 3-Clause License)
+    - NumPy (BSD 3-Clause License)
+    - pytorch-bm3d (MIT License)
 """
 
 from ..base_node import BaseImageProcessingNode

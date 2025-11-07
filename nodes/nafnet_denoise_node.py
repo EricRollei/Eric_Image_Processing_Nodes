@@ -1,6 +1,28 @@
 """
 NAFNet Denoising Node for ComfyUI
-State-of-the-art baseline-free network with pre-trained weights
+Simple Baselines for Image Restoration - state-of-the-art baseline-free network
+
+Author: Eric Hiss (GitHub: EricRollei)
+License: See LICENSE file in repository root
+
+Original NAFNet Algorithm:
+    Paper: "Simple Baselines for Image Restoration"
+    Authors: Chen et al., ECCV 2022
+    Source: https://github.com/megvii-research/NAFNet
+    License: MIT License
+    Pretrained weights: Auto-download from GitHub releases (NAFNet-width32.pth, NAFNet-width64.pth)
+    
+    Citation:
+    @inproceedings{chen2022nafnet,
+      title={Simple Baselines for Image Restoration},
+      author={Chen, Liangyu and Chu, Xiaojie and Zhang, Xiangyu and Sun, Jian},
+      booktitle={European Conference on Computer Vision},
+      year={2022}
+    }
+
+Dependencies:
+    - PyTorch (BSD 3-Clause License)
+    - NumPy (BSD 3-Clause License)
 """
 
 import torch

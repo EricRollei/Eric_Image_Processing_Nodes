@@ -1,0 +1,98 @@
+{
+  "title": "Eric's Image Processing Nodes for ComfyUI",
+  "description": "Advanced image processing nodes for ComfyUI providing 40+ algorithms including traditional denoising (wavelet, NLM, BM3D), AI models (DnCNN, SwinIR, SCUNet, NAFNet), frequency domain processing, and specialized film grain handling with GPU acceleration.",
+  "creators": [
+    {
+      "name": "Hiss, Eric",
+      "affiliation": "Independent Developer",
+      "orcid": ""
+    }
+  ],
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "CC-BY-NC-4.0",
+  "version": "1.0.0",
+  "publication_date": "2025-11-06",
+  "keywords": [
+    "image processing",
+    "denoising",
+    "ComfyUI",
+    "computer vision",
+    "deep learning",
+    "wavelet denoising",
+    "BM3D",
+    "film grain",
+    "GPU acceleration",
+    "image restoration",
+    "DnCNN",
+    "SwinIR",
+    "SCUNet",
+    "NAFNet",
+    "Richardson-Lucy",
+    "Wiener filter",
+    "non-local means",
+    "frequency domain"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/EricRollei/Eric_Image_Processing_Nodes",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    },
+    {
+      "identifier": "10.1109/TIP.2017.2662206",
+      "relation": "cites",
+      "scheme": "doi",
+      "resource_type": "publication-article"
+    },
+    {
+      "identifier": "10.1109/ICCVW54120.2021.00210",
+      "relation": "cites",
+      "scheme": "doi",
+      "resource_type": "publication-article"
+    },
+    {
+      "identifier": "10.1109/TIP.2007.901238",
+      "relation": "cites",
+      "scheme": "doi",
+      "resource_type": "publication-article"
+    },
+    {
+      "identifier": "https://github.com/cszn/DnCNN",
+      "relation": "requires",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/cszn/SCUNet",
+      "relation": "requires",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/JingyunLiang/SwinIR",
+      "relation": "requires",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/megvii-research/NAFNet",
+      "relation": "requires",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/lizhihao6/pytorch-bm3d",
+      "relation": "requires",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/deepinv/deepinv",
+      "relation": "requires",
+      "scheme": "url"
+    }
+  ],
+  "communities": [
+    {
+      "identifier": "zenodo"
+    }
+  ],
+  "language": "eng",
+  "notes": "This software integrates multiple state-of-the-art image processing algorithms and provides them as ComfyUI custom nodes. It includes both traditional signal processing methods and modern deep learning approaches. GPU acceleration is available for performance-critical operations. Model weights are auto-downloaded from official sources on first use."
+}

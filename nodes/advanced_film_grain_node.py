@@ -1,11 +1,30 @@
 """
 Advanced Film Grain Processing Node for ComfyUI
-Integrates GPU-accelerated wavelet denoisin    def process_film_grain(self, image: torch.Tensor, processing_mode: str, grain_type: str,
-                          denoising_method: str, preservation_level: float, wavelet_type: str,
-                          thresholding_method: str, thresholding_mode: str, sigma_adjustment: float,
-                          use_gpu: bool, multi_stage_processing: bool, edge_preservation: bool,
-                          grain_enhancement: bool, debug_output: bool = False, custom_sigma: float = 0.0, 
-                          decomposition_levels: int = 0) -> Tuple[torch.Tensor, str, str]: specialized film grain analysis
+GPU-accelerated multi-stage grain analysis and intelligent denoising
+
+Author: Eric Hiss (GitHub: EricRollei)
+License: See LICENSE file in repository root
+
+Film Grain Processing Approach:
+    Custom implementation combining multiple techniques:
+    - Wavelet-based grain detection (PyWavelets, MIT License)
+    - Frequency domain analysis (SciPy, BSD 3-Clause)
+    - GPU-accelerated processing (CuPy, MIT License - optional)
+    - Custom neural network for grain classification (optional, trained by author)
+    
+    Integrates concepts from:
+    - Film grain synthesis literature
+    - Noise estimation techniques
+    - Adaptive filtering methods
+
+Dependencies:
+    - PyTorch (BSD 3-Clause License)
+    - NumPy (BSD 3-Clause License)
+    - PyWavelets (MIT License)
+    - SciPy (BSD 3-Clause License)
+    - CuPy (MIT License) - optional for GPU acceleration
+    - scikit-image (BSD 3-Clause License)
+"""
 """
 
 import numpy as np

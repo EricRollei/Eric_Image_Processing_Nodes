@@ -1,6 +1,27 @@
 """
-ComfyUI node for Richardson-Lucy deconvolution
+Richardson-Lucy Deconvolution Node for ComfyUI
 Advanced restoration for lens blur, motion blur, and PSF correction
+
+Author: Eric Hiss (GitHub: EricRollei)
+License: See LICENSE file in repository root
+
+Richardson-Lucy Algorithm:
+    Original Papers:
+    - Richardson (1972): "Bayesian-Based Iterative Method of Image Restoration"
+    - Lucy (1974): "An iterative technique for the rectification of observed distributions"
+    
+    Citations:
+    @article{richardson1972bayesian,
+      title={Bayesian-Based Iterative Method of Image Restoration},
+      author={Richardson, William Hadley},
+      journal={JOSA},
+      year={1972}
+    }
+
+Dependencies:
+    - PyTorch (BSD 3-Clause License)
+    - NumPy (BSD 3-Clause License)
+    - SciPy (BSD 3-Clause License)
 """
 
 import torch

@@ -1,4 +1,38 @@
-"""ComfyUI node wrapping the external DeepInv denoising service."""
+"""
+DeepInv Diffusion Denoising Node for ComfyUI
+External service integration for state-of-the-art diffusion-based denoising
+
+Author: Eric Hiss (GitHub: EricRollei)
+License: See LICENSE file in repository root
+
+DeepInv Framework:
+    Source: https://github.com/deepinv/deepinv
+    License: BSD 3-Clause License
+    
+    Models used by service:
+    - DiffUNet: Diffusion-based U-Net denoiser
+    - RAM: Recognize Anything Model (MIT License)
+    - SwinIR: Swin Transformer restoration (Apache 2.0)
+    - DRUNet: Deep Residual U-Net
+    - DnCNN: Denoising CNN wrapper
+    
+    Citation:
+    @software{deepinv,
+      title={DeepInverse: A Library for Deep Inverse Problems},
+      author={DeepInv Contributors},
+      url={https://github.com/deepinv/deepinv},
+      year={2023}
+    }
+
+Setup:
+    Requires external DeepInv service running on localhost:6112
+    See Docs/DEEPINV_SERVICE_GUIDE.md for setup instructions
+
+Dependencies:
+    - PyTorch (BSD 3-Clause License)
+    - NumPy (BSD 3-Clause License)
+    - Requests (Apache 2.0 License)
+"""
 from __future__ import annotations
 
 import os

@@ -1,6 +1,29 @@
 """
-ComfyUI node for SwinIR (Swin Transformer for Image Restoration)
+SwinIR (Swin Transformer for Image Restoration) Node for ComfyUI
 State-of-the-art transformer-based restoration with 67% parameter reduction
+
+Author: Eric Hiss (GitHub: EricRollei)
+License: See LICENSE file in repository root
+
+Original SwinIR Algorithm:
+    Paper: "SwinIR: Image Restoration Using Swin Transformer"
+    Authors: Liang et al., ICCV 2021
+    Source: https://github.com/JingyunLiang/SwinIR
+    License: Apache 2.0
+    Pretrained weights: Auto-download from GitHub releases
+    
+    Citation:
+    @inproceedings{liang2021swinir,
+      title={SwinIR: Image Restoration Using Swin Transformer},
+      author={Liang, Jingyun and Cao, Jiezhang and Sun, Guolei and Zhang, Kai and Van Gool, Luc and Timofte, Radu},
+      booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision Workshops},
+      year={2021}
+    }
+
+Dependencies:
+    - PyTorch (BSD 3-Clause License)
+    - NumPy (BSD 3-Clause License)
+    - timm (Apache 2.0 License)
 """
 
 import torch

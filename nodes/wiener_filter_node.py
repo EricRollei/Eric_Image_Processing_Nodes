@@ -1,6 +1,26 @@
 """
-ComfyUI node for Wiener filter restoration  
+Wiener Filter Restoration Node for ComfyUI
 Optimal frequency domain restoration when noise characteristics are known
+
+Author: Eric Hiss (GitHub: EricRollei)
+License: See LICENSE file in repository root
+
+Wiener Filter Algorithm:
+    Original Work: Norbert Wiener (1949)
+    Paper: "Extrapolation, Interpolation, and Smoothing of Stationary Time Series"
+    
+    Modern Image Processing Reference:
+    @book{gonzalez2008digital,
+      title={Digital Image Processing},
+      author={Gonzalez, Rafael C and Woods, Richard E},
+      year={2008},
+      publisher={Pearson}
+    }
+
+Dependencies:
+    - PyTorch (BSD 3-Clause License)
+    - NumPy (BSD 3-Clause License)
+    - SciPy (BSD 3-Clause License)
 """
 
 import torch

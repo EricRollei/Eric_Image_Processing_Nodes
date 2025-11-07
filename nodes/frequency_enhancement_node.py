@@ -1,6 +1,29 @@
 """
-ComfyUI nodes for advanced frequency domain enhancement
-Homomorphic filtering, phase-preserving enhancement, and multi-scale processing
+Frequency Domain Enhancement Node for ComfyUI
+Homomorphic filtering, phase-preserving enhancement, and multi-scale FFT processing
+
+Author: Eric Hiss (GitHub: EricRollei)
+License: See LICENSE file in repository root
+
+Frequency Domain Techniques:
+    Implementations based on classic signal processing literature:
+    - Homomorphic filtering (Oppenheim et al., 1968)
+    - Phase-preserving enhancement
+    - Multi-scale frequency decomposition
+    - Adaptive frequency filtering
+    
+    Reference:
+    @book{gonzalez2008digital,
+      title={Digital Image Processing},
+      author={Gonzalez, Rafael C and Woods, Richard E},
+      year={2008},
+      publisher={Pearson}
+    }
+
+Dependencies:
+    - PyTorch (BSD 3-Clause License)
+    - NumPy (BSD 3-Clause License)
+    - SciPy (BSD 3-Clause License)
 """
 
 import torch

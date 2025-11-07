@@ -1,6 +1,28 @@
 """
-ComfyUI nodes for SCUNet (Swin-Conv-UNet) image restoration
-State-of-the-art deep learning restoration for mixed degradations
+SCUNet (Swin-Conv-UNet) Node for ComfyUI
+Practical blind image denoising for real-world images
+
+Author: Eric Hiss (GitHub: EricRollei)
+License: See LICENSE file in repository root
+
+Original SCUNet Algorithm:
+    Paper: "Practical Blind Denoising via Swin-Conv-UNet and Data Synthesis"
+    Authors: Zhang et al., ECCV 2022
+    Source: https://github.com/cszn/SCUNet
+    Pretrained weights: Auto-download from HuggingFace (scunet_color_real_psnr.pth, scunet_color_real_gan.pth)
+    
+    Citation:
+    @inproceedings{zhang2022scunet,
+      title={Practical Blind Denoising via Swin-Conv-UNet and Data Synthesis},
+      author={Zhang, Kai and Li, Yawei and Liang, Jingyun and Cao, Jiezhang and Zhang, Yulun and Tang, Hao and Timofte, Radu and Van Gool, Luc},
+      booktitle={European Conference on Computer Vision},
+      year={2022}
+    }
+
+Dependencies:
+    - PyTorch (BSD 3-Clause License)
+    - NumPy (BSD 3-Clause License)
+    - timm (Apache 2.0 License) - for Swin Transformer components
 """
 
 import torch
