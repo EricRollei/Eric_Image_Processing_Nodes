@@ -67,6 +67,13 @@ A comprehensive collection of advanced image processing nodes for ComfyUI, featu
 
 4. **Restart ComfyUI** to load the new nodes
 
+5. **Model Weights**: Most pretrained models download automatically on first use. See [Model Weights Guide](MODEL_WEIGHTS.md) for details on:
+   - Which models auto-download vs. need manual setup
+   - Where to obtain pretrained weights
+   - Storage requirements (~200 MB minimum, 1-2 GB recommended)
+   - License information for each model
+   - Troubleshooting download issues
+
 ## 📘 Documentation Highlights
 
 - [DeepInv Service Setup & Usage Guide](./DEEPINV_SERVICE_GUIDE.md) – Run the FastAPI helper service and explore presets for the `DeepInv Denoise (Eric)` node.

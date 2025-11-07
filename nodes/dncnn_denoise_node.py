@@ -1,6 +1,19 @@
 """
 DnCNN Denoising Node for ComfyUI
 Classic CNN denoiser with pre-trained weights
+
+Author: Eric Hiss (GitHub: EricRollei)
+License: See LICENSE file in repository root
+
+Original DnCNN Algorithm:
+    Paper: "Beyond a Gaussian Denoiser: Residual Learning of Deep CNN for Image Denoising"
+    Authors: Zhang et al., IEEE TIP 2017
+    Source: https://github.com/cszn/DnCNN
+    Pretrained weights auto-download from official repository
+
+Dependencies:
+    - PyTorch (BSD 3-Clause License)
+    - NumPy (BSD 3-Clause License)
 """
 
 import torch

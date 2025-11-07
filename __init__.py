@@ -3,6 +3,29 @@
 Eric's Image Processing Nodes for ComfyUI
 Advanced image enhancement, denoising, restoration, and frequency domain techniques
 GPU-accelerated processing with specialized film grain handling
+
+Author: Eric Hiss (GitHub: EricRollei)
+Contact: eric@historic.camera, eric@rollei.us
+Version: 1.0.0
+Date: November 2025
+
+License: Dual License (Non-Commercial and Commercial Use)
+Copyright (c) 2025 Eric Hiss. All rights reserved.
+
+For licensing details, see LICENSE file in the root directory.
+For model weights and attribution, see Docs/MODEL_WEIGHTS.md
+
+This software integrates and builds upon several excellent research works:
+- DnCNN (Zhang et al., IEEE TIP 2017)
+- SCUNet (Zhang et al., ECCV 2022)
+- SwinIR (Liang et al., ICCV 2021)
+- NAFNet (Chen et al., ECCV 2022)
+- BM3D (Dabov et al., IEEE TIP 2007)
+- pytorch-bm3d (lizhihao6, MIT License)
+- DiffBIR (XPixelGroup, Apache 2.0)
+- DeepInv (deepinv/deepinv, BSD 3-Clause)
+
+See LICENSE file for complete attribution and dependency licenses.
 """
 
 # Initialize all mapping dictionaries to prevent NameError

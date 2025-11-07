@@ -1,6 +1,19 @@
 """
 Base node class for Eric's Image Processing Nodes
 Handles common ComfyUI integration, tensor conversions, and device management
+
+Author: Eric Hiss (GitHub: EricRollei)
+License: See LICENSE file in repository root
+
+This module provides the base functionality for all image processing nodes:
+- ComfyUI tensor format conversion (NHWC [0-1] ↔ numpy [0-255])
+- GPU device detection and management
+- Memory cleanup utilities
+- OpenCV 4.11+ compatibility (ensures contiguous arrays)
+
+Dependencies:
+    - PyTorch (BSD 3-Clause License)
+    - NumPy (BSD 3-Clause License)
 """
 
 import torch

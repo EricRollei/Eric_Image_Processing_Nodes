@@ -1,0 +1,185 @@
+Eric's Image Processing Nodes for ComfyUI
+=========================================
+
+Author: Eric Hiss (GitHub: EricRollei)
+Contact: eric@historic.camera, eric@rollei.us
+Version: 1.0.0
+Date: November 2025
+
+Copyright (c) 2025 Eric Hiss. All rights reserved.
+
+DUAL LICENSE
+============
+
+1. NON-COMMERCIAL USE
+   This software is licensed under the terms of the Creative Commons 
+   Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0).
+   
+   You are free to:
+   - Share: Copy and redistribute the material in any medium or format
+   - Adapt: Remix, transform, and build upon the material
+   
+   Under the following terms:
+   - Attribution: You must give appropriate credit, provide a link to the license,
+     and indicate if changes were made.
+   - NonCommercial: You may not use the material for commercial purposes.
+   
+   To view a copy of this license, visit:
+   http://creativecommons.org/licenses/by-nc/4.0/
+
+2. COMMERCIAL USE
+   For commercial use, a separate license is required.
+   Please contact Eric Hiss at eric@historic.camera or eric@rollei.us 
+   for licensing options.
+
+ATTRIBUTION AND CREDITS
+=======================
+
+This project builds upon and integrates several excellent works from the research
+community. We gratefully acknowledge the following:
+
+Core Dependencies:
+------------------
+- PyTorch (https://pytorch.org/) - BSD 3-Clause License
+- NumPy (https://numpy.org/) - BSD 3-Clause License
+- OpenCV (https://opencv.org/) - Apache 2.0 License
+- Pillow (https://pillow.readthedocs.io/) - HPND License
+- SciPy (https://scipy.org/) - BSD 3-Clause License
+- scikit-image (https://scikit-image.org/) - BSD 3-Clause License
+- PyWavelets (https://pywavelets.readthedocs.io/) - MIT License
+- CuPy (https://cupy.dev/) [Optional, for GPU acceleration] - MIT License
+
+AI/ML Dependencies:
+-------------------
+- Transformers (https://huggingface.co/docs/transformers/) - Apache 2.0 License
+- timm (https://github.com/huggingface/pytorch-image-models) - Apache 2.0 License
+- einops (https://github.com/arogozhnikov/einops) - MIT License
+
+Pretrained Models and Weights:
+-------------------------------
+
+1. DnCNN (Denoising CNN)
+   Paper: "Beyond a Gaussian Denoiser: Residual Learning of Deep CNN for Image Denoising"
+   Authors: Zhang et al., IEEE TIP 2017
+   Source: https://github.com/cszn/DnCNN
+   License: Not explicitly stated (academic research)
+   Models: dncnn_15.pth, dncnn_25.pth, dncnn_50.pth, dncnn_gray_blind.pth, dncnn_color_blind.pth
+   Auto-download from: https://github.com/cszn/DnCNN/raw/master/model/
+
+2. SCUNet (Practical Image Denoising)
+   Paper: "Practical Blind Denoising via Swin-Conv-UNet and Data Synthesis"
+   Authors: Zhang et al., 2022
+   Source: https://github.com/cszn/SCUNet
+   License: Not explicitly stated (academic research)
+   Models: scunet_color_real_psnr.pth, scunet_color_real_gan.pth
+   Auto-download from HuggingFace: https://huggingface.co/datasets/eugenesiow/SCUNet/
+
+3. SwinIR (Image Restoration)
+   Paper: "SwinIR: Image Restoration Using Swin Transformer"
+   Authors: Liang et al., ICCV 2021
+   Source: https://github.com/JingyunLiang/SwinIR
+   License: Apache 2.0
+   Models: Multiple models for denoising, super-resolution, JPEG compression artifact removal
+   Auto-download from: https://github.com/JingyunLiang/SwinIR/releases/
+
+4. NAFNet (Simple Baselines for Image Restoration)
+   Paper: "Simple Baselines for Image Restoration"
+   Authors: Chen et al., ECCV 2022
+   Source: https://github.com/megvii-research/NAFNet
+   License: MIT License
+   Models: NAFNet-width32.pth (denoising), NAFNet-width64.pth (deblurring)
+   Auto-download from: https://github.com/megvii-research/NAFNet/releases/
+
+5. Noise-DA (Noise-Aware Diffusion for Denoising/Deblurring)
+   Paper: "Noise-Aware Diffusion for Blind Image Denoising"
+   Authors: Various (diffusion-based approach)
+   Models: noise_da_denoise.pth, noise_da_deblur.pth
+   Note: These models are created/trained for this project
+
+6. BM3D (Block-Matching 3D Filtering)
+   Paper: "Image Denoising by Sparse 3-D Transform-Domain Collaborative Filtering"
+   Authors: Dabov et al., IEEE TIP 2007
+   Implementation: pytorch-bm3d (https://github.com/lizhihao6/pytorch-bm3d)
+   License: MIT License
+   Note: This is an algorithmic implementation, no pretrained weights required
+
+7. Film Grain Analysis Neural Network
+   Custom CNN model for film grain detection and classification
+   Models: fga_nn_model.pth (film grain analyzer)
+   Note: Trained specifically for this project
+
+8. DeepInv Models (External Service Integration)
+   Repository: https://github.com/deepinv/deepinv
+   License: BSD 3-Clause License
+   Models: DiffUNet, RAM, SwinIR, DRUNet, DnCNN (via DeepInv wrappers)
+   Note: Models are loaded by external DeepInv service, not included in this repo
+
+Third-Party Code Integrations:
+-------------------------------
+
+1. pytorch-bm3d (Embedded Git Repository)
+   Author: lizhihao6
+   Source: https://github.com/lizhihao6/pytorch-bm3d
+   License: MIT License
+   Usage: GPU-accelerated BM3D denoising implementation
+
+2. DiffBIR (Diffusion-based Blind Image Restoration)
+   Authors: XPixelGroup
+   Source: https://github.com/XPixelGroup/DiffBIR
+   License: Apache 2.0
+   Location: transformer_lab/third_party/diffbir/
+   Note: Integrated for advanced diffusion-based restoration
+
+3. RAM (Recognize Anything Model)
+   Source: https://github.com/xinyu1205/recognize-anything
+   License: MIT License
+   Location: transformer_lab/third_party/diffbir/ram/
+   Usage: Image tagging and captioning for diffusion guidance
+
+4. LLaVA (Large Language and Vision Assistant)
+   Source: https://github.com/haotian-liu/LLaVA
+   License: Apache 2.0
+   Location: transformer_lab/third_party/diffbir/llava/
+   Usage: Vision-language model for image understanding
+
+DISCLAIMER
+==========
+
+This software is provided "as is", without warranty of any kind, express or
+implied, including but not limited to the warranties of merchantability,
+fitness for a particular purpose and noninfringement. In no event shall the
+authors or copyright holders be liable for any claim, damages or other
+liability, whether in an action of contract, tort or otherwise, arising from,
+out of or in connection with the software or the use or other dealings in the
+software.
+
+MODEL WEIGHTS DISCLAIMER
+========================
+
+The pretrained model weights referenced in this project are the intellectual
+property of their respective authors and are subject to their own licenses.
+This software provides convenience functions to download these weights from
+their official sources, but does not distribute them directly.
+
+Users are responsible for:
+1. Complying with the licenses of all pretrained models they use
+2. Citing the original papers when using pretrained models in research
+3. Respecting the intended use cases of each model
+
+For commercial use of any pretrained models, please verify the licensing terms
+with the original model authors.
+
+CITATION
+========
+
+If you use this software in your research, please cite:
+
+@software{eric_image_processing_nodes,
+  author = {Hiss, Eric},
+  title = {Eric's Image Processing Nodes for ComfyUI},
+  year = {2025},
+  url = {https://github.com/EricRollei/Eric_Image_Processing_Nodes}
+}
+
+And please cite the original papers for any algorithms or models you use.
+See the References section in Docs/README.md for complete citations.
