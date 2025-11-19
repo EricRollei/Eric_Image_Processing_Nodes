@@ -25,7 +25,7 @@ Dependencies:
     - CuPy (MIT License) - optional for GPU acceleration
     - scikit-image (BSD 3-Clause License)
 """
-"""
+
 
 import numpy as np
 import torch

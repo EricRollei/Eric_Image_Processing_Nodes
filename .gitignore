@@ -58,6 +58,9 @@ tmp/
 test_output/
 output/
 
+# Training scripts and datasets
+train/
+
 # PyTorch BM3D build artifacts
 pytorch-bm3d/build/
 *.o
